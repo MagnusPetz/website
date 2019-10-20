@@ -37,7 +37,7 @@ String.prototype.replaceAll = function(search, replacement) {
 };
 
 function exportFile() {
-	var name = millis();
+	var name = millis() + ".igc";
 	brecord[brecord.length - 1] = generateBRecordLast();
 	var head = "A" + arec.value();
 	head += "\nHFDTEDATE:" + date.value().replaceAll("/", "") + "\nHFDTE" + date.value().replaceAll("/", "");
@@ -112,7 +112,7 @@ function setup() {
 	createElement("span", "End Altitude (m): ");
 	endAltIn = createInput('200');
 	createElement('br', "");
-	createElement("span", "Minumum Latitude (min): ");
+	createElement("span", "Minimum Latitude (min): ");
 	minLatIn = createInput('' + minLat);
 	createElement('br', "");
 	createElement("span", "Maximum Latitude (min): ");
@@ -165,15 +165,17 @@ function zeroPad(count, str) {
 	return temp.padStart(count, '0');
 }
 function generateBRecord() {
+	var lat = yToLat(height - mouseY);
+	var lon = xToLon(mouseX);
+	return new BRecord(hr, mn, sec, lat, lon);
+	/*
 	var record = "B";
 	record += zeroPad(2, hr);
 	record += zeroPad(2, mn);
 	record += zeroPad(2, floor(sec));
-	var lat = yToLat(height - mouseY);
 	record += zeroPad(2, floor(lat / 60));
 	record += zeroPad(5, floor((lat % 60) * 1000));
 	record += "N";
-	var lon = xToLon(mouseX);
 	record += zeroPad(3, floor(lon / 60));
 	record += zeroPad(5, floor((lon % 60) * 1000));
 	record += "E";
@@ -183,6 +185,7 @@ function generateBRecord() {
 	record += "00209";
 	record += "001";
 	return record;
+	*/
 }
 function generateBRecordLast() {
 	var record = "B";
@@ -238,6 +241,10 @@ class BRecord {
 	this.lon = lon;
   }
   
+  setAltitude(alt) {
+	this.alt = alt;
+  }
+  
   generate() {
 	var record = "B";
 	record += zeroPad(2, hr);
@@ -252,8 +259,8 @@ class BRecord {
 	record += zeroPad(5, floor((lon % 60) * 1000));
 	record += "E";
 	record += "A";
-	record += zeroPad(5, floor(endAlt));
-	record += zeroPad(5, floor(endAlt));
+	record += zeroPad(5, floor(alt));
+	record += zeroPad(5, floor(alt));
 	record += "00209";
 	record += "001";
 	return record;
