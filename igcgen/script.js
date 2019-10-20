@@ -238,7 +238,7 @@ class BRecord {
 	this.lon = lon;
   }
   
-  function toString() {
+  function generate() {
 	var record = "B";
 	record += zeroPad(2, hr);
 	record += zeroPad(2, mn);
