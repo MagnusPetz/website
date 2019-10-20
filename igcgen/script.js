@@ -5,13 +5,14 @@ var mouseCoords = [];
 var lastX = -1;
 var lastY = -1;
 
-var minLatIn, maxLatIn, minLonIn, maxLonIn;
+var vel, minLatIn, maxLatIn, minLonIn, maxLonIn;
+var vel = 34.0;
 var minLat = 2940.0;
 var minLon = 600.0;
 var maxLat = 3018.0;
 var maxLon = 840.0;
 
-var startAltIn, endAltIn;
+var velIn, startAltIn, endAltIn;
 
 var startAlt = 100;
 var endAlt = 200;
@@ -106,6 +107,9 @@ function setup() {
 	inp = createElement('textarea', "");
 	inp.size(300, 100);
 	createElement('br', "");
+	createElement("span", "Velocity (m/s): ");
+	velIn = createInput('' + vel);
+	createElement('br', "");
 	createElement("span", "Start Altitude (m): ");
 	startAltIn = createInput('100');
 	createElement('br', "");
@@ -140,13 +144,14 @@ function reset() {
 }
 
 function updateVals() {
+	vel = parseFloat(velIn.value());
 	minLat = parseFloat(minLatIn.value());
 	maxLat = parseFloat(maxLatIn.value());
 	minLon = parseFloat(minLonIn.value());
 	maxLon = parseFloat(maxLonIn.value());
 	startAlt = parseInt(startAltIn.value());
 	endAlt = parseInt(endAltIn.value());
-  alt = startAlt;
+    alt = startAlt;
 }
 
 var hr = 8;
@@ -207,12 +212,15 @@ function generateBRecordLast() {
 	record += "001";
 	return record;
 }
+
 function touchMoved() {
 	if (pmouseX == mouseX && pmouseY == mouseY) {
 		return;
 	}
 	if (lastX != -1 && lastY != -1) {
-		sec += 2 * sqrt((mouseX - lastX)*(mouseX - lastX) + (mouseY - lastY)*(mouseY - lastY));
+		var dist = distance(mouseX, mouseY, lastX, lastY);
+		sec += dist / vel;
+		// sec += 2 * sqrt((mouseX - lastX)*(mouseX - lastX) + (mouseY - lastY)*(mouseY - lastY));
 	}
 	while (sec >= 60) {
 		mn ++;
@@ -232,12 +240,16 @@ function touchMoved() {
 	ellipse(mouseX, mouseY, 2, 2);
 }
 
-function distance(lat1, lon2, lat2, lon2) {
+function toRadians(val) {
+	return (val * PI) / 180;
+}
+
+function distance(lat1, lon1, lat2, lon2) {
 	var R = 6371e3;
-	var φ1 = lat1.toRadians();
-	var φ2 = lat2.toRadians();
-	var Δφ = (lat2-lat1).toRadians();
-	var Δλ = (lon2-lon1).toRadians();
+	var φ1 = toRadians(lat1);
+	var φ2 = toRadians(lat2);
+	var Δφ = toRadians(lat2-lat1);
+	var Δλ = toRadians(lon2-lon1);
 
 	var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
         Math.cos(φ1) * Math.cos(φ2) *
