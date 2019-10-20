@@ -37,7 +37,7 @@ String.prototype.replaceAll = function(search, replacement) {
 };
 
 function exportFile() {
-	var name = millis() + ".igc";
+	var name = millis();
 	brecord[brecord.length - 1] = generateBRecordLast();
 	var head = "A" + arec.value();
 	head += "\nHFDTEDATE:" + date.value().replaceAll("/", "") + "\nHFDTE" + date.value().replaceAll("/", "");
@@ -54,8 +54,8 @@ function exportFile() {
 	head += "\nHFCCLCOMPETITIONCLASS:" + compcl.value();
 	head += "\nHFCIDCOMPETITIONID:" + compid.value();
 	head += "\n" + inp.value();
-  head += "\nI033638FXA3940SIU4143ENL";
-	save(concat(head.split("\n"), brecord), name);
+    head += "\nI033638FXA3940SIU4143ENL";
+	save(concat(head.split("\n"), brecord), name, "igc");
 	// createElement('h2', "File name: " + name);
 }
 function setup() {
